@@ -73,6 +73,4 @@ for r in ds_admin_repos['name' ]:
     # update 'dev-team-has-admin-permission' to true if the repo has admin permission
     ds_report.loc[ds_report['name'] == r, 'gatekeeper-team-has-admin-permission'] = ds_admin_repos.loc[ds_admin_repos['name'] == r, 'has_admin_permission'].values[0]
 
-ds_report.to_csv('report.csv', index=False)
-
-
+ds_report.to_csv(f"report-{pd.Timestamp.now().strftime('%Y%m%d%H%M%S')}.csv", index=False)
