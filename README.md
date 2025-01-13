@@ -16,7 +16,7 @@ Gather the teams repos and ensure they are meeting our standards for topics and 
 You should generate an API key with the following permissions:
 
 ```
-repo.public_repo
+repo
 admin:org.read:org
 user.read:user
 ```
