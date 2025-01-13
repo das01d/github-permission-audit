@@ -1,4 +1,3 @@
-# %%
 import os
 import requests
 import pandas as pd
@@ -11,7 +10,7 @@ org = "sherwin-williams-co"
 
 # Get list of repos that have the correct topic
 headers = {"Authorization": f"token {GITHUB_TOKEN}"}
-search_url = f"https://api.github.com/search/repositories?per_page=100&q=topic:business-platforms+org:{org}"
+search_url = f"https://api.github.com/search/repositories?per_page=100&q=topic:business-platforms&org:{org}"
 repos = requests.get(search_url, headers=headers).json().get('items', [])
 
 data_dict = pd.DataFrame(repos)
