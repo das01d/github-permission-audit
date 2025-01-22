@@ -5,17 +5,19 @@ import pandas as pd
 
 # Load environment variables from .env file
 load_dotenv()
-
-# Get the variable
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-org = "sherwin-williams-co"
+
+SPREADSHEET_FILE = './reports/CMDB Config - Final - 2025-01-21.xlsx'
+WORKSHEET_NAME = 'Map'
+
+ORG = "sherwin-williams-co"
 
 headers = {"Authorization": f"token {GITHUB_TOKEN}"}
 
 # get custom property of the repo
 # only properties with values set are returned
 def get_repo_custom_property(repo_name):
-    url = f"https://api.github.com/repos/{org}/{repo_name}/properties/values"
+    url = f"https://api.github.com/repos/{ORG}/{repo_name}/properties/values"
     response = requests.get(url, headers=headers)
     response_json = response.json()
 
@@ -28,7 +30,7 @@ def get_repo_custom_property(repo_name):
     return props
 
 def update_repo_custom_property(repo_name, custom_property_name, custom_property_value):
-    url = f"https://api.github.com/repos/{org}/{repo_name}/properties/values"
+    url = f"https://api.github.com/repos/{ORG}/{repo_name}/properties/values"
     json = {
         "properties": [
             {
@@ -41,9 +43,7 @@ def update_repo_custom_property(repo_name, custom_property_name, custom_property
     return response.status_code
 
 # Loop through a spreadsheet with the mappings and update the custom properties to align with the CMDB
-
-SPREADSHEET_FILE = './reports/CMDB Config - Final - 2025-01-21.xlsx'
-mapping = pd.read_excel(SPREADSHEET_FILE, sheet_name='Map')
+mapping = pd.read_excel(SPREADSHEET_FILE, sheet_name=WORKSHEET_NAME)
 
 errors_with_business_app_updates = {}
 errors_with_service_updates = {}

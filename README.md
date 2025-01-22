@@ -1,13 +1,11 @@
 # Github Permissions Audit - Business Platforms
 
-## Table of Contents
-
-- [About](#about)
-- [Usage](#usage)
-
 ## About <a name = "about"></a>
 
-Gather the teams repos and ensure they are meeting our standards for topics and team permissions.
+The scripts in this repo are to help with the following:
+
+* Gather the teams repos and ensure they are meeting our standards for topics and team permissions.
+* Update repo custom properties to reflect the association to the CMDB.
 
 ### Prerequisites
 
@@ -30,8 +28,26 @@ pip install -r ./requirements.txt
 ```
 ## Usage <a name = "usage"></a>
 
-Execute script and evaluate report.csv.
+### Audit repo against standards
+
+Execute script and evaluate ./reports/report-{timestamp}.csv.
 
 ```cmd
 python ./audit-repos.py
+```
+
+### Update repo CMDB Custom Properties
+
+Create an excel file that maps repo names to the CMDB Business Appliation and Services.  Run the update-repos-cmdb-custom-props.py to apply the changes.
+
+Update SPREADSHEET_FILE and WORKSHEET_NAME to reflect your mapping spreadsheet.  
+
+Your spreadsheet should have the following columns:
+
+* Repo
+* Business App
+* Service
+
+```cmd
+python ./update-repos-cmdb-custom-props.py
 ```
