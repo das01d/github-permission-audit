@@ -6,7 +6,12 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-org = "sherwin-williams-co"
+
+# Setting for your repos
+GITHUB_ORG = os.getenv("GITHUB_ORG", "sherwin-williams-co")
+GITHUB_TOPIC = os.getenv("GITHUB_TOPIC", "business-platforms")
+GITHUB_GROUP_GATEKEEPERS = os.getenv("GITHUB_GROUP_GATEKEEPERS", "gg-aad-dss-digitalit-iom-gatekeepers")
+GITHUB_GROUP_DEVELOPERS = os.getenv("GITHUB_GROUP_DEVELOPERS", "gg-aad-dss-digitalit-iom-developers")
 
 headers = {
     "Authorization": f"token {GITHUB_TOKEN}",
@@ -14,21 +19,26 @@ headers = {
 }
 
 # Get list of repos that have the correct topic
-search_url = f"https://api.github.com/search/repositories?q=topic:business-platforms+org:{org}&per_page=100"
+search_url = f"https://api.github.com/search/repositories?q=topic:{GITHUB_TOPIC}+org:{GITHUB_ORG}&per_page=100"
 repos = requests.get(search_url, headers=headers).json().get('items', [])
+
+if repos == []:
+    print(f"No repos found for the '{GITHUB_TOPIC} topic in the {GITHUB_ORG} organization.")
+    exit(1)
+
 ds_list_of_repos_from_topic = pd.DataFrame(repos).loc[:,['name', 'clone_url', 'archived']]
 
 # Get list of repos from our groups that should have access
 def get_team_repos(team_slug):
-    repos_url = f"https://api.github.com/orgs/{org}/teams/{team_slug}/repos?per_page=100"
+    repos_url = f"https://api.github.com/orgs/{GITHUB_ORG}/teams/{team_slug}/repos?per_page=100"
     response = requests.get(repos_url, headers=headers)
     if response.status_code == 200:
         return response.json()
     else:
         raise(f"Error: {response.status_code}") 
 
-resp_admins = get_team_repos(team_slug = "gg-aad-dss-digitalit-iom-gatekeepers")
-resp_devs = get_team_repos(team_slug = "gg-aad-dss-digitalit-iom-developers")
+resp_admins = get_team_repos(team_slug = GITHUB_GROUP_GATEKEEPERS)
+resp_devs = get_team_repos(team_slug = GITHUB_GROUP_DEVELOPERS)
 
 def shape_data(resp):
     temp_data_frame = pd.DataFrame(resp)
