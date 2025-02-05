@@ -6,11 +6,19 @@ import pandas as pd
 # Load environment variables from .env file
 load_dotenv()
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+GITHUB_ORG = os.getenv("GITHUB_ORG", "sherwin-williams-co")
 
+# The names of the custom properties to be set
+BUSINESS_APP_PROPERTY_NAME = "CMDB-Business-Application-Number"
+SERVICE_PROPERTY_NAME = "CMDB-Business-Service-Number"
+
+# The workbook path and worksheet name with the mapping
 SPREADSHEET_FILE = './reports/CMDB Config - Final - 2025-01-21.xlsx'
 WORKSHEET_NAME = 'Map'
 
-ORG = "sherwin-williams-co"
+# The columns in the spreadsheet that map to the properties
+BUSINESS_APP_COLUMN_NAME = 'Business App'
+SERVICE_COLUMN_NAME = 'Service'
 
 headers = {"Authorization": f"token {GITHUB_TOKEN}"}
 
@@ -51,21 +59,18 @@ errors_with_service_updates = {}
 for index, row in mapping.iterrows():
     repo_name = row['Repo']
 
-    business_app_property_name = "CMDB-Business-Application-Number"
-    business_app_value = row['Business App']
-
-    service_property_name = "CMDB-Business-Service-Number"
-    service_value = row['Service']
+    business_app_value = row[BUSINESS_APP_COLUMN_NAME]
+    service_value = row[SERVICE_COLUMN_NAME]
 
     # update the custom properties
-    status_code = update_repo_custom_property(repo_name, custom_property_name=business_app_property_name, custom_property_value=business_app_value)
-    print(f"Updated {repo_name} custom value {business_app_property_name} with value {business_app_value} status code {status_code}")
+    status_code = update_repo_custom_property(repo_name, custom_property_name=BUSINESS_APP_PROPERTY_NAME, custom_property_value=business_app_value)
+    print(f"Updated {repo_name} custom value {BUSINESS_APP_PROPERTY_NAME} with value {business_app_value} status code {status_code}")
 
     if status_code != 204:
         errors_with_business_app_updates[repo_name] = {status_code: status_code}
 
-    status_code = update_repo_custom_property(repo_name, custom_property_name=service_property_name, custom_property_value=service_value)
-    print(f"Updated {repo_name} custom value {service_property_name} with value {service_value} status code {status_code}")
+    status_code = update_repo_custom_property(repo_name, custom_property_name=SERVICE_PROPERTY_NAME, custom_property_value=service_value)
+    print(f"Updated {repo_name} custom value {SERVICE_PROPERTY_NAME} with value {service_value} status code {status_code}")
 
     if status_code != 204:
         errors_with_service_updates[repo_name] = {'status_code': status_code}
